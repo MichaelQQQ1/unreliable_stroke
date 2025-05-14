@@ -1,0 +1,71 @@
+<body style="margin: 0; width: 100vw; height: 100vh"></body>
+<script src="https://artware.app/js/canvas.js"></script>
+<script>
+/* global Canvas */
+  
+  const canvas = new Canvas('body')
+  
+  let track = []
+  let dots = []
+  
+  let moving = false
+  
+  function degrade(track) {
+  dots = [] // clear out old dots
+  for (let i = 0; i < track.length; i += 6) {
+    dots.push(track[i])
+  } // loop that goes through "track", but 5 points will be jumped
+}
+
+// tracking the mouse movements and record points
+canvas.element.addEventListener('mousemove', () => {
+  if (moving) {
+    track.push({ x: canvas.mouseX, y: canvas.mouseY }) //append the current positions to "track" 
+  }
+})
+
+//  drawing starts!
+  canvas.element.addEventListener('mousedown', () => {
+  track = []
+  moving = true
+})
+
+//  drawing stops! degrading starts!
+  canvas.element.addEventListener('mouseup', () => {
+  moving = false
+  degrade(track)
+})
+  
+// Central function for drawing
+function runTool () {
+  
+  canvas.clear()
+
+  // Draw lines 
+  if (track.length > 1 && moving) {
+    canvas.strokeColor = 'gray'
+    for (let i = 1; i < track.length; i++) {
+      let p1 = track[i - 1], p2 = track[i]
+      canvas.line(p1.x, p1.y, p2.x, p2.y) // loop through all the points in track; and connect them with short line
+    }
+  } else {
+    
+    // Draw degraded points
+  canvas.fillColor = 'gray'
+  for (let p of dots) {
+    canvas.circle(p.x, p.y, 5) // loop through all the dots in "dots" and draw tiny dots
+  }
+    
+  }
+  
+    
+}
+
+// when to run "runTool"
+canvas.element.addEventListener('mousemove', runTool)
+canvas.element.addEventListener('mouseup', runTool)
+
+  
+</script>
+
+
